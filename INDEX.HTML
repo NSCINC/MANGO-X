@@ -14,67 +14,63 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #FFCC00; /* Tropical yellow */
-            color: #333; /* Dark text color for contrast */
+            background-color: #222;
+            color: #fff;
         }
         #chat-container {
             width: 90%;
             max-width: 400px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.8);
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
         }
         h1 {
             text-align: center;
-            color: #FF5733; /* Tropical orange */
-            margin-bottom: 10px;
-        }
-        #database-selector {
+            color: #007bff;
             margin-bottom: 20px;
-            text-align: center;
         }
         #messages {
             max-height: 300px;
-            padding: 10px;
+            padding: 20px;
             overflow-y: auto;
-            border: 1px solid #FF5733; /* Tropical orange border */
+            border-bottom: 1px solid #555;
             border-radius: 5px;
-            background-color: #FFE0B2; /* Light tropical color */
+            background-color: #333;
         }
         .message {
             margin-bottom: 10px;
-            color: #333;
+            color: #fff;
         }
         .message.user {
             text-align: right;
-            color: #FF5733; /* User message color */
+            color: #007bff; /* User message color */
         }
         .message.bot {
             text-align: left;
-            color: #333; /* Bot message color */
+            color: #fff; /* Bot message color */
         }
         #input-container {
             display: flex;
             flex-wrap: wrap;
             padding: 10px;
-            background-color: #FFCC00; /* Tropical yellow */
+            background-color: #444;
             border-radius: 5px;
         }
         #input-container input {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             border: none;
             border-radius: 5px;
-            background-color: #fff; /* Input background */
-            color: #333;
+            background-color: #333;
+            color: #fff;
             margin-right: 10px;
             margin-bottom: 10px;
         }
         #input-container button {
-            padding: 10px 15px;
+            padding: 12px 20px;
             border: none;
-            background: #FF5733; /* Tropical orange */
+            background: #007bff;
             color: #fff;
             font-size: 16px;
             border-radius: 5px;
@@ -82,35 +78,24 @@
             transition: background 0.3s;
         }
         #input-container button:hover {
-            background: #C0392B; /* Darker shade on hover */
+            background: #0056b3;
         }
-        #database-selector select {
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #FF5733; /* Border color */
-            margin-bottom: 20px;
-            width: 100%;
-            background-color: #FFE0B2; /* Light tropical color */
+        #profile-icon {
+            width: 30px;
+            height: 30px;
+            margin-left: 10px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div id="chat-container">
         <h1>Mango X - AI Chat</h1>
-        
-        <div id="database-selector">
-            <select id="database-select">
-                <option value="default">Select Database</option>
-                <option value="wiki">Wikipedia</option>
-                <option value="custom">Custom Database</option>
-                <!-- Add more database options as needed -->
-            </select>
-        </div>
-
         <div id="messages"></div>
         <div id="input-container">
             <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off">
             <button onclick="sendMessage()">Send</button>
+            <a href="profile.html"><img src="icone_profile.png" alt="Profile Icon" id="profile-icon"></a>
         </div>
     </div>
 
@@ -138,21 +123,14 @@
         }
 
         async function getBotResponse(userInput) {
-            const database = document.getElementById('database-select').value;
-            let response;
+            const response = await fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=${encodeURIComponent(userInput)}&origin=*`);
+            const data = await response.json();
+            const searchResults = data.query.search;
 
-            if (database === "wiki") {
-                response = await fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=${encodeURIComponent(userInput)}&origin=*`);
-                const data = await response.json();
-                const searchResults = data.query.search;
-
-                if (searchResults.length > 0) {
-                    return searchResults[0].snippet.replace(/<\/?[^>]+(>|$)/g, ""); // Remove HTML tags
-                } else {
-                    return 'Sorry, no results found for your query.';
-                }
+            if (searchResults.length > 0) {
+                return searchResults[0].snippet.replace(/<\/?[^>]+(>|$)/g, ""); // Remove HTML tags
             } else {
-                return 'Custom database functionality is not yet implemented.';
+                return 'Sorry, no results found for your query.';
             }
         }
 
