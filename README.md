@@ -1,5 +1,5 @@
 
-# 🍄 Mango 🍄
+🥭  Mango 🥭 
 
 ## 🌌 Tecnologias Utilizadas
 
