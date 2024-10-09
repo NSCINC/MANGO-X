@@ -14,30 +14,31 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #ffcc00; /* Mango yellow background */
+            background-color: #000; /* Black background */
             color: #fff;
         }
         #chat-container {
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
             padding: 30px;
             background: rgba(255, 102, 0, 0.8); /* Mango orange */
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 20px rgba(255, 102, 0, 0.5);
             position: relative;
         }
         h1 {
             text-align: center;
-            color: #007bff;
+            color: #007bff; /* Title color */
             margin-bottom: 20px;
         }
         #messages {
-            max-height: 300px;
+            max-height: 400px; /* Increased height for better visibility */
             padding: 20px;
             overflow-y: auto;
-            border-bottom: 1px solid #555;
+            border: 1px solid #555;
             border-radius: 5px;
             background-color: #ff5722; /* Tropical orange */
+            margin-bottom: 20px; /* Space below the messages */
         }
         .message {
             margin-bottom: 10px;
@@ -94,12 +95,12 @@
     <div id="chat-container">
         <h1>Mango X - AI Chat</h1>
         
-        <!-- Dropdown for database selection -->
+        <!-- Dropdown for cloud database selection -->
         <select id="database-select">
-            <option value="">Select Database</option>
-            <option value="db1">Database 1</option>
-            <option value="db2">Database 2</option>
-            <option value="db3">Database 3</option>
+            <option value="">Select Cloud Database</option>
+            <option value="gcp_firestore">Google Cloud Firestore</option>
+            <option value="azure_cosmos">Azure Cosmos DB</option>
+            <option value="aws_dynamodb">AWS DynamoDB</option>
         </select>
         
         <div id="messages"></div>
@@ -112,6 +113,7 @@
     <script>
         async function sendMessage() {
             const userInput = document.getElementById('user-input').value.trim();
+            const dbSelection = document.getElementById('database-select').value;
             if (!userInput) return;
 
             const messageContainer = document.getElementById('messages');
@@ -119,7 +121,7 @@
             messageContainer.appendChild(userMessage);
 
             try {
-                const botResponse = await getBotResponse(userInput);
+                const botResponse = await getBotResponse(userInput, dbSelection);
 
                 const botMessage = createMessageElement('bot', botResponse);
                 messageContainer.appendChild(botMessage);
@@ -132,7 +134,10 @@
             messageContainer.scrollTop = messageContainer.scrollHeight;
         }
 
-        async function getBotResponse(userInput) {
+        async function getBotResponse(userInput, dbSelection) {
+            // Here you would handle the database selection logic to fetch data.
+            // Currently, it uses Wikipedia API for demonstration purposes.
+
             const response = await fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=${encodeURIComponent(userInput)}&origin=*`);
             const data = await response.json();
             const searchResults = data.query.search;
