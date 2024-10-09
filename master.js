@@ -61,6 +61,25 @@ function displayMessage(sender, text) {
     messageContainer.appendChild(message);
     messageContainer.scrollTop = messageContainer.scrollHeight; // Auto-scroll
 }
+// master.js
+
+async function handleUserInput(userInput, dbSelection) {
+    try {
+        const response = await fetch('http://localhost:3000/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ input: userInput, dbSelection }),
+        });
+
+        const data = await response.json();
+        return data.message; // You can adjust this based on what you want to return
+    } catch (error) {
+        console.error('Error handling user input:', error);
+        return 'An error occurred while processing your request.';
+    }
+}
 
 // Initialize the chat when the window loads
 window.onload = initChat;
